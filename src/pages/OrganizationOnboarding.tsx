@@ -10,11 +10,15 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Plus, Edit, Upload } from "lucide-react";
 import { useState } from "react";
+import AddContactModal from "@/components/modals/AddContactModal";
 
 const OrganizationOnboarding = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const navigate = useNavigate();
   const totalSteps = 7;
+  
+  const [showContactModal, setShowContactModal] = useState(false);
+  const [contactList, setContactList] = useState([]);
   
   const progressPercentage = (currentStep / totalSteps) * 100;
 
@@ -33,7 +37,6 @@ const OrganizationOnboarding = () => {
   };
 
   const handleSkip = () => {
-    // Skip to review step
     setCurrentStep(5);
   };
 
@@ -41,101 +44,130 @@ const OrganizationOnboarding = () => {
     switch (currentStep) {
       case 1:
         return (
-          <div className="space-y-6">
+          <div className="space-y-8">
             <div>
-              <h2 className="text-2xl font-bold mb-4">Basic Company Information</h2>
-              <p className="text-muted-foreground mb-6">
+              <h2 className="text-3xl font-bold mb-4">Basic Company Information</h2>
+              <p className="text-muted-foreground text-lg mb-8">
                 Tell us about your organization
               </p>
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="orgName">Organization Name</Label>
-              <Input id="orgName" placeholder="Enter your organization name" />
-            </div>
-            
-            <div className="space-y-2">
-              <Label>Company Size</Label>
-              <RadioGroup defaultValue="" className="grid grid-cols-3 gap-4">
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="small" id="small" />
-                  <Label htmlFor="small">Small (1-50)</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="medium" id="medium" />
-                  <Label htmlFor="medium">Medium (51-500)</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="large" id="large" />
-                  <Label htmlFor="large">Large (501+)</Label>
-                </div>
-              </RadioGroup>
-            </div>
-            
-            <div className="space-y-2">
-              <Label>Industry Sectors</Label>
-              <div className="grid grid-cols-2 gap-2">
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="healthcare" />
-                  <Label htmlFor="healthcare">Healthcare</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="insurance" />
-                  <Label htmlFor="insurance">Insurance</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="manufacturing" />
-                  <Label htmlFor="manufacturing">Manufacturing</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="education" />
-                  <Label htmlFor="education">Education</Label>
-                </div>
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="website">Website URL</Label>
-              <Input id="website" type="url" placeholder="https://yourcompany.com" />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="logo">Upload Logo</Label>
-              <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
-                <Upload className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                <p className="text-muted-foreground">Click to upload or drag and drop</p>
-                <p className="text-sm text-muted-foreground">PNG, JPG up to 5MB</p>
-              </div>
-            </div>
-            
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="country">Country</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select country" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="us">United States</SelectItem>
-                    <SelectItem value="ca">Canada</SelectItem>
-                    <SelectItem value="uk">United Kingdom</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="orgName">Organization Name</Label>
+                <Input id="orgName" placeholder="Enter your organization name" className="linkedin-input" />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="state">State/Province</Label>
-                <Input id="state" placeholder="Enter state/province" />
+              
+              <div className="space-y-4">
+                <Label className="text-lg font-medium">Company Size</Label>
+                <RadioGroup defaultValue="" className="grid grid-cols-3 gap-4">
+                  <Card className="linkedin-card cursor-pointer hover:border-primary">
+                    <CardContent className="p-4 text-center">
+                      <RadioGroupItem value="small" id="small" className="mb-2" />
+                      <Label htmlFor="small" className="cursor-pointer">
+                        <div className="font-medium">Small</div>
+                        <div className="text-sm text-muted-foreground">1-50 employees</div>
+                      </Label>
+                    </CardContent>
+                  </Card>
+                  <Card className="linkedin-card cursor-pointer hover:border-primary">
+                    <CardContent className="p-4 text-center">
+                      <RadioGroupItem value="medium" id="medium" className="mb-2" />
+                      <Label htmlFor="medium" className="cursor-pointer">
+                        <div className="font-medium">Medium</div>
+                        <div className="text-sm text-muted-foreground">51-500 employees</div>
+                      </Label>
+                    </CardContent>
+                  </Card>
+                  <Card className="linkedin-card cursor-pointer hover:border-primary">
+                    <CardContent className="p-4 text-center">
+                      <RadioGroupItem value="large" id="large" className="mb-2" />
+                      <Label htmlFor="large" className="cursor-pointer">
+                        <div className="font-medium">Large</div>
+                        <div className="text-sm text-muted-foreground">501+ employees</div>
+                      </Label>
+                    </CardContent>
+                  </Card>
+                </RadioGroup>
               </div>
-            </div>
-            
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="city">City</Label>
-                <Input id="city" placeholder="Enter city" />
+              
+              <div className="space-y-4">
+                <Label className="text-lg font-medium">Industry Sectors</Label>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="healthcare" />
+                    <Label htmlFor="healthcare">Healthcare</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="insurance" />
+                    <Label htmlFor="insurance">Insurance</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="manufacturing" />
+                    <Label htmlFor="manufacturing">Manufacturing</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="education" />
+                    <Label htmlFor="education">Education</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="government" />
+                    <Label htmlFor="government">Government</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="nonprofit" />
+                    <Label htmlFor="nonprofit">Non-profit</Label>
+                  </div>
+                </div>
               </div>
+              
               <div className="space-y-2">
-                <Label htmlFor="zip">ZIP/Postal Code</Label>
-                <Input id="zip" placeholder="Enter ZIP/postal code" />
+                <Label htmlFor="website">Website URL</Label>
+                <Input id="website" type="url" placeholder="https://yourcompany.com" className="linkedin-input" />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="logo">Upload Logo</Label>
+                <Card className="linkedin-card">
+                  <CardContent className="p-8">
+                    <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
+                      <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                      <p className="text-muted-foreground">Click to upload or drag and drop</p>
+                      <p className="text-sm text-muted-foreground">PNG, JPG up to 5MB</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+              
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="country">Country</Label>
+                  <Select>
+                    <SelectTrigger className="linkedin-input">
+                      <SelectValue placeholder="Select country" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="us">United States</SelectItem>
+                      <SelectItem value="ca">Canada</SelectItem>
+                      <SelectItem value="uk">United Kingdom</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="state">State/Province</Label>
+                  <Input id="state" placeholder="Enter state/province" className="linkedin-input" />
+                </div>
+              </div>
+              
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="city">City</Label>
+                  <Input id="city" placeholder="Enter city" className="linkedin-input" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="zip">ZIP/Postal Code</Label>
+                  <Input id="zip" placeholder="Enter ZIP/postal code" className="linkedin-input" />
+                </div>
               </div>
             </div>
           </div>
@@ -143,32 +175,59 @@ const OrganizationOnboarding = () => {
       
       case 2:
         return (
-          <div className="space-y-6">
+          <div className="space-y-8">
             <div>
-              <h2 className="text-2xl font-bold mb-4">Contact & Key Personnel</h2>
-              <p className="text-muted-foreground mb-6">
+              <h2 className="text-3xl font-bold mb-4">Contact & Key Personnel</h2>
+              <p className="text-muted-foreground text-lg mb-8">
                 Add key contacts for your organization
               </p>
             </div>
             
-            <Card className="shadow-card">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold">Contacts</h3>
-                  <Button size="sm">
+            <Card className="linkedin-card">
+              <CardContent className="p-8">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-semibold">Contacts</h3>
+                  <Button onClick={() => setShowContactModal(true)} className="linkedin-button">
                     <Plus className="h-4 w-4 mr-2" />
                     Add Contact
                   </Button>
                 </div>
                 
-                <div className="text-center py-8 text-muted-foreground">
-                  <p>No contacts added yet. Click "Add Contact" to get started.</p>
-                </div>
+                {contactList.length === 0 ? (
+                  <div className="text-center py-12 text-muted-foreground">
+                    <p>No contacts added yet. Click "Add Contact" to get started.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {contactList.map((contact, index) => (
+                      <Card key={index} className="p-4 border">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h4 className="font-semibold">{contact.firstName} {contact.lastName}</h4>
+                            <p className="text-muted-foreground">{contact.jobTitle}</p>
+                            <p className="text-sm text-muted-foreground">{contact.email}</p>
+                            <p className="text-sm text-muted-foreground">{contact.phone}</p>
+                            <p className="text-xs text-muted-foreground">Prefers: {contact.preferredMethod}</p>
+                          </div>
+                          <div className="flex space-x-2">
+                            <Button variant="ghost" size="sm"><Edit className="h-4 w-4" /></Button>
+                          </div>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
+            
+            <AddContactModal
+              isOpen={showContactModal}
+              onClose={() => setShowContactModal(false)}
+              onSave={(contact) => setContactList([...contactList, contact])}
+            />
           </div>
         );
-      
+
       case 3:
         return (
           <div className="space-y-6">
@@ -472,7 +531,7 @@ const OrganizationOnboarding = () => {
               </p>
             </div>
             
-            <Card className="shadow-card">
+            <Card className="linkedin-card">
               <CardContent className="p-8 text-center">
                 <p className="text-muted-foreground">
                   Step {currentStep} content coming soon...
@@ -487,44 +546,46 @@ const OrganizationOnboarding = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-card">
-        <div className="container mx-auto px-4 py-4">
+      <header className="border-b bg-card shadow-sm">
+        <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <Link to="/register" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-primary rounded-lg"></div>
-              <span className="text-xl font-bold">VocConnect</span>
+            <Link to="/register" className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-lg">V</span>
+              </div>
+              <span className="text-2xl font-bold text-primary">VocConnect</span>
             </Link>
             
             <div className="text-center">
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground mb-2">
                 Step {currentStep} of {totalSteps}
               </p>
-              <Progress value={progressPercentage} className="w-32" />
+              <Progress value={progressPercentage} className="w-40 h-2" />
             </div>
             
-            <div className="w-32"> {/* Spacer for centering */}
-            </div>
+            <div className="w-40"></div>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="py-8">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
+      <main className="py-12">
+        <div className="container mx-auto px-6">
+          <div className="max-w-4xl mx-auto">
             {renderStep()}
           </div>
         </div>
       </main>
 
       {/* Footer Navigation */}
-      <footer className="border-t bg-card py-6">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between max-w-3xl mx-auto">
+      <footer className="border-t bg-card py-6 sticky bottom-0">
+        <div className="container mx-auto px-6">
+          <div className="flex items-center justify-between max-w-4xl mx-auto">
             <Button 
               variant="outline" 
               onClick={handleBack}
               disabled={currentStep === 1}
+              className="linkedin-button"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back
@@ -534,13 +595,13 @@ const OrganizationOnboarding = () => {
               <Button 
                 variant="ghost" 
                 onClick={handleSkip}
-                className="text-muted-foreground"
+                className="text-muted-foreground hover:text-foreground"
               >
                 Skip for Now
               </Button>
             )}
             
-            <Button onClick={handleNext}>
+            <Button onClick={handleNext} className="linkedin-button">
               {currentStep === totalSteps ? "Complete My Profile" : "Save & Next"}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
